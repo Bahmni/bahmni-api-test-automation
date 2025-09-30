@@ -1,0 +1,16 @@
+{
+    "spec": "tests/**/*.spec.js",
+    "extension": ["js"],
+    "file": ["tests/fixtures/rootHooks.js"],
+    "reporter": "mochawesome",
+    "reporterOptions": {
+        "reportDir": "./reports/json",
+        "reportFilename": "testresult",
+        "inline": true,
+        "charts": true,
+        "saveJson": true,
+        "saveHtml": false,
+        "overwrite": true,
+        "quiet": true
+    }
+}
