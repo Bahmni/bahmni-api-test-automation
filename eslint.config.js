@@ -1,7 +1,6 @@
 import js from "@eslint/js";
 import mochaPlugin from "eslint-plugin-mocha";
 import prettierPlugin from "eslint-plugin-prettier";
-import nodePlugin from "eslint-plugin-node";
 
 export default [
   {
@@ -38,17 +37,12 @@ export default [
     },
     plugins: {
       mocha: mochaPlugin,
-      prettier: prettierPlugin,
-      node: nodePlugin
+      prettier: prettierPlugin
     },
     rules: {
       "no-unused-vars": ["warn"],
       "no-console": "off",
       "mocha/no-exclusive-tests": "error",
-      "node/no-unsupported-features/es-syntax": [
-        "error",
-        { ignores: ["modules"] }
-      ],
       "prettier/prettier": "warn",
     }
   },
