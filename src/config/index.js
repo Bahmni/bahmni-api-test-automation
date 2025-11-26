@@ -1,11 +1,11 @@
 import { environments } from "./environments.js";
 
 function environmentName() {
-    const env = process.env.TEST_ENV;
+    let env = process.env.TEST_ENV;
     if (!env) {
         throw new Error (`Test environment has not been specified!!`)
     }
-    env.trim().toLowerCase();
+    env = env.trim().toLowerCase();
     if (!environments[env]) {
         throw new Error (`Invalid environment ${env}. Provide a valid environment name: DEV | QA | UAT.`)
     }

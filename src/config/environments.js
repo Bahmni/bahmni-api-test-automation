@@ -1,6 +1,9 @@
 export let environments = {
+    local: {
+        baseUri: "https://localhost/"
+    },
     dev: {
-        baseUri: "https://gorest.co.in/",
+        baseUri: "https://dev.systemx.com/",
         userName: "",
         password: ""
     }, 
