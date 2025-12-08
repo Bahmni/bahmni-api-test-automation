@@ -1,7 +1,9 @@
-import chai from "chai";
-import { expect } from "chai";
+import { expect, use } from "chai";
 import chaiAsPromised from "chai-as-promised";
 
-chai.use(chaiAsPromised);
+// Disable SSL certificate validation for test environments with self-signed certificates
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
+use(chaiAsPromised);
 
 global.expect = expect;
