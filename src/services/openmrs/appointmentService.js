@@ -1,7 +1,7 @@
 import { authenticatedRequest } from "../../config/apiClient.js";
 import { getAppointmentServiceAttributeTypeUuids } from "../openmrs/appointmentServiceAttributeTypes.js";
 
-export const appointmentservice = {
+const appointmentservice = {
   base: "openmrs/ws/rest/v1/appointmentService",
   getAll: "/all/default",
 };
@@ -32,6 +32,15 @@ export async function validateIfServiceExists(serviceName) {
       uuid: null,
     };
   }
+}
+
+export async function getServiceByUuid(serviceUuid) {
+  const response = await authenticatedRequest()
+    .get(appointmentservice.base)
+    .query({ uuid: serviceUuid })
+    .expect(200);
+
+  return response;
 }
 
 export async function deleteServiceByUuid(serviceUuid) {
