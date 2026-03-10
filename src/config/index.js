@@ -20,6 +20,5 @@ const envDetails = environments[environment];
 export const config = {
   env: environment,
   baseURI: envDetails.baseUri,
-  username: process.env.USERNAME,
-  password: process.env.PASSWORD,
+  useMockOtp: envDetails.useMockOtp,
 };

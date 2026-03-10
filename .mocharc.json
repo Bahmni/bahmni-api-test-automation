@@ -2,15 +2,17 @@
     "spec": "tests/**/*.spec.js",
     "extension": ["js"],
     "file": ["tests/fixtures/rootHooks.js"],
+    "timeout": 180000,
     "reporter": "mochawesome",
-    "reporterOptions": {
-        "reportDir": "./reports/json",
-        "reportFilename": "testresult",
-        "inline": true,
-        "charts": true,
-        "saveJson": true,
-        "saveHtml": false,
-        "overwrite": true,
-        "quiet": true
-    }
+    "reporter-option": [
+        "reportDir=./mochawesome-report",
+        "reportFilename=mochawesome",
+        "inline=true",
+        "charts=true",
+        "saveJson=true",
+        "saveHtml=true",
+        "overwrite=true",
+        "quiet=false",
+        "code=false"
+    ]
 }
