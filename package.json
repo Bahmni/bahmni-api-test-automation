@@ -6,11 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --config .mocharc.json",
-    "test:iom": "mocha --config .mocharc.json --spec 'tests/specs/iom/**/*.spec.js' && npm run report:generate",
-    "test:iom:onlineappointment": "mocha --config .mocharc.json --spec 'tests/specs/iom/onlineappointment/**/*.spec.js' && npm run report:generate",
-    "test:iom:userverification": "mocha --config .mocharc.json --spec 'tests/specs/iom/onlineappointment/1-validateUserVerificationAPIs.spec.js' --spec 'tests/specs/iom/onlineappointment/2-validateMetadataAPIs.spec.js' --spec 'tests/specs/iom/onlineappointment/3-validateCspAPI.spec.js' && npm run report:generate",
     "test:bahmni": "mocha --config .mocharc.json --spec 'tests/specs/bahmni/**/*.spec.js' && npm run report:generate",
-    "test:miHealth": "mocha --config .mocharc.json --spec 'tests/specs/**/*.spec.js' && npm run report:generate",
     "report:generate": "mochawesome-report-generator mochawesome-report/mochawesome.json --reportDir mochawesome-report --reportFilename mochawesome --inline --overwrite --code false",
     "test:report": "npm test && npm run report:generate",
     "prepare": "husky",

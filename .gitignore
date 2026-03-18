@@ -8,7 +8,7 @@ yarn.lock
 # System Files
 .DS_Store
 
-# Test Data (MailSlurp inbox storage)
+# Test Data
 test-data/
 
 # Environment Variables

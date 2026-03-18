@@ -40,9 +40,6 @@ Create `.env` file:
 TEST_ENV=dev
 SUPERADMIN_USERNAME=admin
 SUPERADMIN_PASSWORD=Admin123
-
-# Optional (for qa/uat with real email OTP)
-# MAILSLURP_API_KEY=your_api_key_here
 ```
 
 ### Run Tests
@@ -71,10 +68,10 @@ bahmni-api-test-automation/
 ```
 
 **Key Concepts:**
-- **`src/services/`** - All API calls go here. One service file per domain/module.
-- **`tests/specs/`** - Test files organized by feature.
-- **`tests/fixtures/`** - Reusable helpers and utilities.
-- **`tests/testdata/`** - Test data (credentials, payloads) separated for reusability.
+- **`src/services/`** - All API calls go here. One service file per domain/module
+- **`tests/specs/`** - Test files organized by feature
+- **`tests/fixtures/`** - Reusable helpers and utilities
+- **`tests/testdata/`** - Test data (credentials, payloads) separated for reusability
 
 ---
 
@@ -82,17 +79,17 @@ bahmni-api-test-automation/
 
 ### 1. Create Your First Test
 
-Create `tests/specs/myTest.spec.js`:
+Create `tests/specs/bahmni/myTest.spec.js`:
 
 ```javascript
-import { getSupportedCountries } from "../../src/services/iom/onlineAppointment.js";
-import { addTestLog, addApiDetailsToReport } from "../fixtures/rootHooks.js";
+import { getAllServiceDetails } from "../../../src/services/openmrs/appointmentService.js";
+import { addTestLog, addApiDetailsToReport } from "../../fixtures/rootHooks.js";
 
 describe("My First Test", function() {
-  it("should fetch countries", async function() {
-    addTestLog(this, "Fetching supported countries");
+  it("should fetch appointment services", async function() {
+    addTestLog(this, "Fetching appointment services");
     
-    const response = await getSupportedCountries();
+    const response = await getAllServiceDetails();
     addApiDetailsToReport(this);
     
     expect(response.status).to.equal(200);
@@ -107,28 +104,40 @@ Run: `npm test`
 
 ### 2. Add a New Service Method
 
-Add to `src/services/iom/onlineAppointment.js`:
+Add to `src/services/openmrs/appointmentService.js`:
 
 ```javascript
 import { authenticatedRequest } from "../../config/apiClient.js";
-import { trackApiCall } from "../../helpers/apiTracker.js";
+import { handleApiResponse } from "../../helpers/apiResponseHandler.js";
+import { lastApiCall } from "../../helpers/apiTracker.js";
 import { config } from "../../config/index.js";
 
-export async function getMyData(param) {
-  const endpoint = "api/my-endpoint";
+export async function getServiceByName(serviceName) {
+  const endpoint = "openmrs/ws/rest/v1/appointmentService";
+  const fullEndpoint = `${config.baseURI}${endpoint}`;
+  const queryParams = { name: serviceName };
   
-  return await trackApiCall(
-    () => authenticatedRequest().get(endpoint).query({ param }).expect(200),
-    { method: "GET", endpoint: config.baseURI + endpoint, queryParams: { param } }
+  lastApiCall.method = 'GET';
+  lastApiCall.endpoint = fullEndpoint;
+  lastApiCall.payload = null;
+  lastApiCall.queryParams = queryParams;
+  
+  return handleApiResponse(
+    authenticatedRequest().get(endpoint).query(queryParams),
+    200,
+    'GET',
+    fullEndpoint,
+    null,
+    queryParams
   );
 }
 ```
 
 **Key Points:**
-- Use `trackApiCall()` for automatic API tracking & reporting
+- Use `handleApiResponse()` for automatic API tracking & error handling
 - Use `authenticatedRequest()` for basic auth
-- Use `onlineAppointmentSessionRequest()` for session-based APIs
-- Use `unauthenticatedRequest()` for public APIs
+- Use `lastApiCall` to track request details for reports
+- Set method, endpoint, payload, and queryParams before making the call
 
 📖 **Details:** [API Tracker Guide](API_TRACKER_GUIDE.md)
 
@@ -143,21 +152,20 @@ export function myGeneralHelper() {
 }
 ```
 
-**Domain-specific helpers:** `tests/fixtures/iom/testHelpers.js`
+**Domain-specific helpers:** `tests/fixtures/testHelpers.js`
 ```javascript
-export function getTomorrowDate() {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  return tomorrow.toISOString().split('T')[0];
+export function generateServiceName(prefix = "Test-Service") {
+  const timestamp = Date.now();
+  return `${prefix}-${timestamp}`;
 }
 ```
 
 **Usage:**
 ```javascript
-import { getTomorrowDate } from "../../fixtures/iom/testHelpers.js";
+import { generateServiceName } from "../../fixtures/testHelpers.js";
 
-it("test with date", async function() {
-  const date = getTomorrowDate();
+it("test with unique service name", async function() {
+  const serviceName = generateServiceName();
   // Use in test
 });
 ```
@@ -166,11 +174,15 @@ it("test with date", async function() {
 
 ### 4. Work with Test Data
 
-**Payloads:** `tests/testdata/payloads/iom/myPayload.js`
+**Payloads:** `tests/testdata/payloads/bahmni/createServicePayload.js`
 ```javascript
-export function myPayload(email, name) {
-  return { email, name, timestamp: new Date().toISOString() };
-}
+export const appointmentServicePayload = {
+  name: "Test-Service",
+  description: "Test service description",
+  startTime: "09:00:00",
+  endTime: "17:00:00",
+  maxAppointmentsLimit: 10
+};
 ```
 
 **Environment-specific data:**
@@ -239,10 +251,9 @@ Tests (specs/) → Services (src/services/) → Config/Helpers (src/config/, src
 
 **1. API Tracker** - Auto-captures API details for reports (reduces code by 70%)  
 **2. Auth Manager** - Dynamic credential switching during tests  
-**3. Session Manager** - Manages session cookies for session-based APIs  
-**4. Email OTP Helper** - Handles OTP: mock for dev/local, real email for qa/uat
+**3. Response Handler** - Centralized error handling with detailed logging
 
-📖 **Details:** [API Tracker Guide](API_TRACKER_GUIDE.md) | [Email OTP Guide](EMAIL_OTP_SETUP_GUIDE.md)
+📖 **Details:** [API Tracker Guide](API_TRACKER_GUIDE.md)
 
 ---
 
@@ -252,16 +263,14 @@ Tests (specs/) → Services (src/services/) → Config/Helpers (src/config/, src
 # All tests
 npm test
 
-# Specific suites
-npm run test:iom
-npm run test:iom:onlineappointment
+# Specific suite
 npm run test:bahmni
 
 # With environment
 TEST_ENV=qa npm test
 
 # Specific file
-npx mocha tests/specs/iom/onlineappointment/1-validateUserVerificationAPIs.spec.js
+npx mocha tests/specs/bahmni/appointmentService.spec.js
 
 # Generate report only
 npm run report:generate
@@ -278,7 +287,6 @@ npm run report:generate
 TEST_ENV=dev                    # Required: dev, qa, uat, local
 SUPERADMIN_USERNAME=admin       # Required
 SUPERADMIN_PASSWORD=Admin123    # Required
-MAILSLURP_API_KEY=key          # Optional: only for qa/uat with real OTP
 ```
 
 ### Environments
@@ -287,8 +295,19 @@ Configured in `src/config/environments.js`:
 
 ```javascript
 export let environments = {
-  dev: { baseUri: "https://dev.bahmni.org", useMockOtp: true },
-  qa: { baseUri: "https://qa.bahmni.org", useMockOtp: false },
+  local: {
+    baseUri: "https://localhost/",
+  },
+  dev: {
+    baseUri: "https://dev.bahmni.org/",
+    userName: "",
+    password: "",
+  },
+  qa: {
+    baseUri: "https://qa.bahmni.org/",
+    userName: "",
+    password: "",
+  },
   // ...
 };
 ```
@@ -341,15 +360,13 @@ expect(actualObject).to.deep.equal(expectedObject);
 ## 📚 Additional Guides
 
 - **[API Tracker Guide](API_TRACKER_GUIDE.md)** - Complete API tracking & service creation
-- **[Email OTP Setup](EMAIL_OTP_SETUP_GUIDE.md)** - Email OTP validation (mock & real)
-- **[Azure DevOps Setup](AZURE_DEVOPS_SETUP.md)** - CI/CD pipeline configuration
 
 ---
 
 ## 🎯 Best Practices
 
 1. **Service Layer First** - Create service methods, never direct HTTP calls in tests
-2. **Use API Tracker** - Wrap all service methods with `trackApiCall()`
+2. **Use API Tracker Pattern** - Follow the `lastApiCall` + `handleApiResponse()` pattern for all service methods
 3. **Reset Auth** - Always reset credentials in `afterEach`
 4. **Add Logs** - Use `addTestLog()` for debugging
 5. **Separate Data** - Keep payloads/credentials in testdata/

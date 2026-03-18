@@ -20,5 +20,4 @@ const envDetails = environments[environment];
 export const config = {
   env: environment,
   baseURI: envDetails.baseUri,
-  useMockOtp: envDetails.useMockOtp,
 };

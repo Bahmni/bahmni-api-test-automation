@@ -13,129 +13,103 @@ The centralized API tracker (`apiTracker.js`) automatically captures all API req
 
 ## 🚀 Quick Start: Creating a New Service File
 
-### Step 1: Import the Helper
+### Step 1: Import the Required Modules
 
 ```javascript
 import { authenticatedRequest } from "../../config/apiClient.js";
-// OR for session-based APIs (after OTP login):
-import { onlineAppointmentSessionRequest } from "../../config/apiClient.js";
-
-import { trackApiCall } from "../../helpers/apiTracker.js";
+import { handleApiResponse } from "../../helpers/apiResponseHandler.js";
+import { lastApiCall } from "../../helpers/apiTracker.js";
+import { config } from "../../config/index.js";
 ```
 
-### Step 2: Wrap Your API Calls
+### Step 2: Create Your API Functions
 
 **Example 1: Simple GET Request**
 ```javascript
-export async function getItems() {
-  return await trackApiCall(
-    () => authenticatedRequest()
-      .get("api/v1/items")
-      .expect(200),
-    {
-      method: "GET",
-      endpoint: "api/v1/items"
-    }
+export async function getAllServices() {
+  const endpoint = "openmrs/ws/rest/v1/appointmentService/all/default";
+  const fullEndpoint = `${config.baseURI}${endpoint}`;
+  
+  lastApiCall.method = 'GET';
+  lastApiCall.endpoint = fullEndpoint;
+  lastApiCall.payload = null;
+  lastApiCall.queryParams = null;
+  
+  return handleApiResponse(
+    authenticatedRequest().get(endpoint),
+    200,
+    'GET',
+    fullEndpoint
   );
 }
 ```
 
 **Example 2: GET with Query Parameters**
 ```javascript
-export async function getUserById(userId) {
-  return await trackApiCall(
-    () => authenticatedRequest()
-      .get("api/v1/users")
-      .query({ id: userId })
-      .expect(200),
-    {
-      method: "GET",
-      endpoint: "api/v1/users",
-      queryParams: { id: userId }
-    }
+export async function getServiceByUuid(serviceUuid) {
+  const endpoint = "openmrs/ws/rest/v1/appointmentService";
+  const fullEndpoint = `${config.baseURI}${endpoint}`;
+  const queryParams = { uuid: serviceUuid };
+  
+  lastApiCall.method = 'GET';
+  lastApiCall.endpoint = fullEndpoint;
+  lastApiCall.payload = null;
+  lastApiCall.queryParams = queryParams;
+  
+  return handleApiResponse(
+    authenticatedRequest().get(endpoint).query(queryParams),
+    200,
+    'GET',
+    fullEndpoint,
+    null,
+    queryParams
   );
 }
 ```
 
 **Example 3: POST with Payload**
 ```javascript
-export async function createUser(userData) {
-  return await trackApiCall(
-    () => authenticatedRequest()
-      .post("api/v1/users")
-      .send(userData)
-      .expect(201),
-    {
-      method: "POST",
-      endpoint: "api/v1/users",
-      payload: userData
-    }
+export async function createService(serviceData) {
+  const endpoint = "openmrs/ws/rest/v1/appointmentService";
+  const fullEndpoint = `${config.baseURI}${endpoint}`;
+  
+  lastApiCall.method = 'POST';
+  lastApiCall.endpoint = fullEndpoint;
+  lastApiCall.payload = serviceData;
+  lastApiCall.queryParams = null;
+  
+  return handleApiResponse(
+    authenticatedRequest().post(endpoint).send(serviceData),
+    200,
+    'POST',
+    fullEndpoint,
+    serviceData
   );
 }
 ```
 
 **Example 4: DELETE with Query Parameters**
 ```javascript
-export async function deleteUser(userId) {
-  return await trackApiCall(
-    () => authenticatedRequest()
-      .delete("api/v1/users")
-      .query({ id: userId })
-      .expect(200),
-    {
-      method: "DELETE",
-      endpoint: "api/v1/users",
-      queryParams: { id: userId }
-    }
+export async function deleteServiceByUuid(serviceUuid) {
+  const endpoint = "openmrs/ws/rest/v1/appointmentService";
+  const fullEndpoint = `${config.baseURI}${endpoint}`;
+  const queryParams = { uuid: serviceUuid };
+  
+  lastApiCall.method = "DELETE";
+  lastApiCall.endpoint = fullEndpoint;
+  lastApiCall.payload = null;
+  lastApiCall.queryParams = queryParams;
+
+  return handleApiResponse(
+    authenticatedRequest().delete(endpoint).query(queryParams),
+    200,
+    'DELETE',
+    fullEndpoint,
+    null,
+    queryParams
   );
 }
 ```
-
----
-
-## 🔐 Session-Based APIs (Online Appointment Service)
-
-Some APIs require session cookies (e.g., after OTP login). Use `onlineAppointmentSessionRequest()` instead of `authenticatedRequest()`:
-
-**Example: Get User Account (with session cookie)**
-```javascript
-import { onlineAppointmentSessionRequest } from "../../config/apiClient.js";
-import { trackApiCall } from "../../helpers/apiTracker.js";
-
-export async function getUserAccount() {
-  return await trackApiCall(
-    () => onlineAppointmentSessionRequest()
-      .get("online-appointment-service/api/user-verification/user-account")
-      .expect(200),
-    {
-      method: "GET",
-      endpoint: "online-appointment-service/api/user-verification/user-account"
-    }
-  );
-}
-```
-
-**Example: POST with session cookie**
-```javascript
-export async function createAppointment(appointmentData) {
-  return await trackApiCall(
-    () => onlineAppointmentSessionRequest()
-      .post("online-appointment-service/api/appointments")
-      .send(appointmentData)
-      .expect(201),
-    {
-      method: "POST",
-      endpoint: "online-appointment-service/api/appointments",
-      payload: appointmentData
-    }
-  );
-}
-```
-
-**When to use which?**
-- `authenticatedRequest()` - For APIs using basic auth (username/password)
-- `onlineAppointmentSessionRequest()` - For APIs using session cookies (after OTP login)
-- `unauthenticatedRequest()` - For public APIs (like sending OTP)
 
 ---
 
@@ -143,67 +117,89 @@ export async function createAppointment(appointmentData) {
 
 ```javascript
 import { authenticatedRequest } from "../../config/apiClient.js";
-import { trackApiCall } from "../../helpers/apiTracker.js";
+import { handleApiResponse } from "../../helpers/apiResponseHandler.js";
+import { lastApiCall } from "../../helpers/apiTracker.js";
+import { config } from "../../config/index.js";
 
 const myService = {
-  base: "api/v1/myservice",
+  base: "openmrs/ws/rest/v1/myservice",
 };
 
 // GET request example
 export async function getAll() {
-  return await trackApiCall(
-    () => authenticatedRequest()
-      .get(myService.base)
-      .expect(200),
-    {
-      method: "GET",
-      endpoint: myService.base
-    }
+  const endpoint = myService.base;
+  const fullEndpoint = `${config.baseURI}${endpoint}`;
+  
+  lastApiCall.method = 'GET';
+  lastApiCall.endpoint = fullEndpoint;
+  lastApiCall.payload = null;
+  lastApiCall.queryParams = null;
+  
+  return handleApiResponse(
+    authenticatedRequest().get(endpoint),
+    200,
+    'GET',
+    fullEndpoint
   );
 }
 
 // POST request example
 export async function create(data) {
-  return await trackApiCall(
-    () => authenticatedRequest()
-      .post(myService.base)
-      .send(data)
-      .expect(201),
-    {
-      method: "POST",
-      endpoint: myService.base,
-      payload: data
-    }
+  const endpoint = myService.base;
+  const fullEndpoint = `${config.baseURI}${endpoint}`;
+  
+  lastApiCall.method = 'POST';
+  lastApiCall.endpoint = fullEndpoint;
+  lastApiCall.payload = data;
+  lastApiCall.queryParams = null;
+  
+  return handleApiResponse(
+    authenticatedRequest().post(endpoint).send(data),
+    200,
+    'POST',
+    fullEndpoint,
+    data
   );
 }
 
 // PUT/UPDATE request example
-export async function update(id, data) {
-  return await trackApiCall(
-    () => authenticatedRequest()
-      .put(`${myService.base}/${id}`)
-      .send(data)
-      .expect(200),
-    {
-      method: "PUT",
-      endpoint: `${myService.base}/${id}`,
-      payload: data
-    }
+export async function update(uuid, data) {
+  const endpoint = myService.base;
+  const fullEndpoint = `${config.baseURI}${endpoint}`;
+  const updatedData = { ...data, uuid };
+  
+  lastApiCall.method = 'POST';
+  lastApiCall.endpoint = fullEndpoint;
+  lastApiCall.payload = updatedData;
+  lastApiCall.queryParams = null;
+  
+  return handleApiResponse(
+    authenticatedRequest().post(endpoint).send(updatedData),
+    200,
+    'POST',
+    fullEndpoint,
+    updatedData
   );
 }
 
 // DELETE request example
-export async function remove(id) {
-  return await trackApiCall(
-    () => authenticatedRequest()
-      .delete(myService.base)
-      .query({ id: id })
-      .expect(200),
-    {
-      method: "DELETE",
-      endpoint: myService.base,
-      queryParams: { id: id }
-    }
+export async function remove(uuid) {
+  const endpoint = myService.base;
+  const fullEndpoint = `${config.baseURI}${endpoint}`;
+  const queryParams = { uuid };
+  
+  lastApiCall.method = 'DELETE';
+  lastApiCall.endpoint = fullEndpoint;
+  lastApiCall.payload = null;
+  lastApiCall.queryParams = queryParams;
+  
+  return handleApiResponse(
+    authenticatedRequest().delete(endpoint).query(queryParams),
+    200,
+    'DELETE',
+    fullEndpoint,
+    null,
+    queryParams
   );
 }
 ```
@@ -215,29 +211,31 @@ export async function remove(id) {
 **No changes needed!** The tracking happens automatically. Just use `addApiDetailsToReport(this)` after API calls:
 
 ```javascript
-import { getItems, createItem } from "../../../src/services/myService.js";
+import { getAllServiceDetails, createService } from "../../../src/services/openmrs/appointmentService.js";
 import { addTestLog, addApiDetailsToReport } from "../../fixtures/rootHooks.js";
 
-describe("My Service Tests", function() {
-  it("should get all items", async function() {
-    addTestLog(this, "Fetching all items");
+describe("Appointment Service Tests", function() {
+  it("should get all appointment services", async function() {
+    addTestLog(this, "Fetching all appointment services");
     
-    const response = await getItems();
+    const response = await getAllServiceDetails();
     addApiDetailsToReport(this); // Add API details to HTML report
     
     expect(response.status).to.equal(200);
-    addTestLog(this, `Received ${response.body.length} items`);
+    expect(response.body).to.be.an('array');
+    addTestLog(this, `Received ${response.body.length} services`);
   });
   
-  it("should create an item", async function() {
-    const newItem = { name: "Test Item" };
-    addTestLog(this, `Creating item: ${newItem.name}`);
+  it("should create an appointment service", async function() {
+    const serviceData = { name: "Test-Service", startTime: "09:00:00" };
+    addTestLog(this, `Creating service: ${serviceData.name}`);
     
-    const response = await createItem(newItem);
+    const response = await createService(serviceData);
     addApiDetailsToReport(this); // Add API details to HTML report
     
-    expect(response.status).to.equal(201);
-    addTestLog(this, `Item created with ID: ${response.body.id}`);
+    expect(response.status).to.equal(200);
+    expect(response.body).to.have.property('uuid');
+    addTestLog(this, `Service created with UUID: ${response.body.uuid}`);
   });
 });
 ```
@@ -293,55 +291,55 @@ The API details appear in your mochawesome HTML reports as:
 
 ---
 
-## 🔄 Migrating Existing Service Files (Optional)
+## 🔄 How It Works
 
-If you have old service files with manual tracking, you can migrate them:
+The Bahmni framework uses a combination of `lastApiCall` for tracking and `handleApiResponse()` for error handling:
 
-**Before (Manual Tracking - Redundant):**
+**Pattern Breakdown:**
 ```javascript
-export async function getUser(id) {
-  lastApiCall.method = "GET";
-  lastApiCall.endpoint = `${process.env.BAHMNI_URL}/api/users`;
-  lastApiCall.queryParams = { id: id };
+export async function getServiceByUuid(uuid) {
+  // 1. Define the endpoint
+  const endpoint = "openmrs/ws/rest/v1/appointmentService";
+  const fullEndpoint = `${config.baseURI}${endpoint}`;
+  const queryParams = { uuid };
   
-  const response = await authenticatedRequest()
-    .get("api/users")
-    .query({ id: id })
-    .expect(200);
+  // 2. Track request details BEFORE making the call
+  lastApiCall.method = 'GET';
+  lastApiCall.endpoint = fullEndpoint;
+  lastApiCall.payload = null;
+  lastApiCall.queryParams = queryParams;
   
-  lastApiCall.statusCode = response.status;
-  lastApiCall.response = response.body;
-  
-  return response;
-}
-```
-
-**After (Using Helper - Clean!):**
-```javascript
-export async function getUser(id) {
-  return await trackApiCall(
-    () => authenticatedRequest()
-      .get("api/users")
-      .query({ id: id })
-      .expect(200),
-    {
-      method: "GET",
-      endpoint: "api/users",
-      queryParams: { id: id }
-    }
+  // 3. Make the API call with handleApiResponse for automatic error handling
+  return handleApiResponse(
+    authenticatedRequest().get(endpoint).query(queryParams),
+    200,                    // Expected status code
+    'GET',                  // HTTP method
+    fullEndpoint,           // Full URL for error reporting
+    null,                   // Payload (null for GET)
+    queryParams             // Query parameters
   );
 }
 ```
 
-**10+ lines → 3 lines! Much cleaner! 🎉**
+**Benefits:**
+- ✅ Automatic request/response tracking
+- ✅ Detailed error messages with full context
+- ✅ Consistent pattern across all services
+- ✅ Easy debugging with captured API details
 
 ---
 
 ## 📝 Summary
 
-- **New service files**: Just wrap API calls with `trackApiCall()`
+- **New service files**: Follow the pattern with `lastApiCall` + `handleApiResponse()`
 - **Test spec files**: Use `addApiDetailsToReport(this)` for passing tests
-- **Failed tests**: Automatic - nothing to do!
+- **Failed tests**: Automatic - detailed error context is included!
 - **HTML reports**: Beautiful, detailed, automatic!
+
+**Key Steps for Each API Function:**
+1. Define endpoint and full endpoint URL
+2. Set `lastApiCall` properties (method, endpoint, payload, queryParams)
+3. Return `handleApiResponse()` with the request and expected status
+4. All API details are automatically captured!
 
 **Creating new services is now EASY and CONSISTENT! ✨**
