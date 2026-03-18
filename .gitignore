@@ -1,3 +1,17 @@
+# Test Reports
 mochawesome-report
+
+# Dependencies
 node_modules
-.DS_Store.DS_Store
+yarn.lock
+
+# System Files
+.DS_Store
+
+# Test Data
+test-data/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local

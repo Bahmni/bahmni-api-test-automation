@@ -6,6 +6,9 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --config .mocharc.json",
+    "test:bahmni": "mocha --config .mocharc.json --spec 'tests/specs/bahmni/**/*.spec.js' && npm run report:generate",
+    "report:generate": "mochawesome-report-generator mochawesome-report/mochawesome.json --reportDir mochawesome-report --reportFilename mochawesome --inline --overwrite --code false",
+    "test:report": "npm test && npm run report:generate",
     "prepare": "husky",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -31,6 +34,7 @@
     "eslint-plugin-promise": "^7.2.1",
     "eslint-plugin-security": "^3.0.1",
     "husky": "^9.1.7",
+    "mailslurp-client": "^17.0.0",
     "mocha": "^11.7.2",
     "mochawesome": "^7.1.4",
     "mochawesome-merge": "^5.0.0",

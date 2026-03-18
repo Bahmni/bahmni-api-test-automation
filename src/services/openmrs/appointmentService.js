@@ -1,5 +1,8 @@
 import { authenticatedRequest } from "../../config/apiClient.js";
 import { getAppointmentServiceAttributeTypeUuids } from "../openmrs/appointmentServiceAttributeTypes.js";
+import { handleApiResponse } from "../../helpers/apiResponseHandler.js";
+import { lastApiCall } from "../../helpers/apiTracker.js";
+import { config } from "../../config/index.js";
 
 const appointmentservice = {
   base: "openmrs/ws/rest/v1/appointmentService",
@@ -7,11 +10,19 @@ const appointmentservice = {
 };
 
 export async function getAllServiceDetails() {
-  const response = await authenticatedRequest()
-    .get(`${appointmentservice.base}${appointmentservice.getAll}`)
-    .expect(200);
-
-  return response;
+  const fullEndpoint = `${config.baseURI}${appointmentservice.base}${appointmentservice.getAll}`;
+  
+  lastApiCall.method = 'GET';
+  lastApiCall.endpoint = fullEndpoint;
+  lastApiCall.payload = null;
+  lastApiCall.queryParams = null;
+  
+  return handleApiResponse(
+    authenticatedRequest().get(`${appointmentservice.base}${appointmentservice.getAll}`),
+    200,
+    'GET',
+    fullEndpoint
+  );
 }
 
 export async function validateIfServiceExists(serviceName) {
@@ -35,21 +46,41 @@ export async function validateIfServiceExists(serviceName) {
 }
 
 export async function getServiceByUuid(serviceUuid) {
-  const response = await authenticatedRequest()
-    .get(appointmentservice.base)
-    .query({ uuid: serviceUuid })
-    .expect(200);
-
-  return response;
+  const fullEndpoint = `${config.baseURI}${appointmentservice.base}`;
+  const queryParams = { uuid: serviceUuid };
+  
+  lastApiCall.method = 'GET';
+  lastApiCall.endpoint = fullEndpoint;
+  lastApiCall.payload = null;
+  lastApiCall.queryParams = queryParams;
+  
+  return handleApiResponse(
+    authenticatedRequest().get(appointmentservice.base).query(queryParams),
+    200,
+    'GET',
+    fullEndpoint,
+    null,
+    queryParams
+  );
 }
 
 export async function deleteServiceByUuid(serviceUuid) {
-  const response = await authenticatedRequest()
-    .delete(appointmentservice.base)
-    .query({ uuid: serviceUuid })
-    .expect(200);
+  const fullEndpoint = `${config.baseURI}${appointmentservice.base}`;
+  const queryParams = { uuid: serviceUuid };
+  
+  lastApiCall.method = "DELETE";
+  lastApiCall.endpoint = fullEndpoint;
+  lastApiCall.payload = null;
+  lastApiCall.queryParams = queryParams;
 
-  return response;
+  return handleApiResponse(
+    authenticatedRequest().delete(appointmentservice.base).query(queryParams),
+    200,
+    'DELETE',
+    fullEndpoint,
+    null,
+    queryParams
+  );
 }
 
 export async function updateServicePayloadWithAttributeTypeUuids(payload) {
@@ -66,25 +97,38 @@ export async function updateServicePayloadWithAttributeTypeUuids(payload) {
 }
 
 export async function createService(payload) {
-  const servicePayload =
-    await updateServicePayloadWithAttributeTypeUuids(payload);
+  const servicePayload = await updateServicePayloadWithAttributeTypeUuids(payload);
+  const fullEndpoint = `${process.env.BAHMNI_URL || "https://localhost"}/${appointmentservice.base}`;
 
-  const response = await authenticatedRequest()
-    .post(appointmentservice.base)
-    .send(servicePayload)
-    .expect(200);
+  lastApiCall.method = "POST";
+  lastApiCall.endpoint = fullEndpoint;
+  lastApiCall.payload = servicePayload;
+  lastApiCall.queryParams = null;
 
-  return response;
+  return handleApiResponse(
+    authenticatedRequest().post(appointmentservice.base).send(servicePayload),
+    200,
+    'POST',
+    fullEndpoint,
+    servicePayload
+  );
 }
 
 export async function updateService(uuid, payload) {
-  const servicePayload =
-    await updateServicePayloadWithAttributeTypeUuids(payload);
+  const servicePayload = await updateServicePayloadWithAttributeTypeUuids(payload);
   servicePayload.uuid = uuid;
-  const response = await authenticatedRequest()
-    .post(appointmentservice.base)
-    .send(servicePayload)
-    .expect(200);
+  const fullEndpoint = `${process.env.BAHMNI_URL || "https://localhost"}/${appointmentservice.base}`;
 
-  return response;
+  lastApiCall.method = "POST";
+  lastApiCall.endpoint = fullEndpoint;
+  lastApiCall.payload = servicePayload;
+  lastApiCall.queryParams = null;
+
+  return handleApiResponse(
+    authenticatedRequest().post(appointmentservice.base).send(servicePayload),
+    200,
+    'POST',
+    fullEndpoint,
+    servicePayload
+  );
 }
