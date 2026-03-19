@@ -22,10 +22,10 @@ export async function getUserByUsername(username, customParams) {
   return handleApiResponse(
     authenticatedRequest().get(user.getUser).query(queryParams),
     200,
-    'GET',
+    "GET",
     fullEndpoint,
     null,
-    queryParams
+    queryParams,
   );
 }
 

@@ -40,13 +40,19 @@ describe("Test Appointment Service API", function () {
       bahmniUserCredentials.appointmentService.expected_privileges,
     );
 
-    addTestLog(this, `Setting credentials for user: ${bahmniUserCredentials.appointmentService.username}`);
+    addTestLog(
+      this,
+      `Setting credentials for user: ${bahmniUserCredentials.appointmentService.username}`,
+    );
     setAuthCredentials(
       bahmniUserCredentials.appointmentService.username,
       bahmniUserCredentials.appointmentService.password,
     );
 
-    addTestLog(this, `Creating appointment service: ${appointmentServicePayload.name}`);
+    addTestLog(
+      this,
+      `Creating appointment service: ${appointmentServicePayload.name}`,
+    );
     const response = await createService(appointmentServicePayload);
     addApiDetailsToReport(this); // Add API details to report
 
@@ -54,11 +60,11 @@ describe("Test Appointment Service API", function () {
       .to.have.property("name")
       .to.equal(appointmentServicePayload.name);
     addTestLog(this, `Verified service name: ${response.body.name}`);
-    
+
     expect(response.body).to.have.property("uuid").to.exist;
     serviceUuid = response.body.uuid;
     addTestLog(this, `Service UUID: ${serviceUuid}`);
-    
+
     expect(response.body).to.have.property("appointmentServiceId").to.exist;
     appointmentServiceId = response.body.appointmentServiceId;
     addTestLog(this, `Service ID: ${appointmentServiceId}`);
@@ -72,7 +78,10 @@ describe("Test Appointment Service API", function () {
       bahmniUserCredentials.serviceAvailability.expected_privileges,
     );
 
-    addTestLog(this, `Setting credentials for user: ${bahmniUserCredentials.serviceAvailability.username}`);
+    addTestLog(
+      this,
+      `Setting credentials for user: ${bahmniUserCredentials.serviceAvailability.username}`,
+    );
     setAuthCredentials(
       bahmniUserCredentials.serviceAvailability.username,
       bahmniUserCredentials.serviceAvailability.password,
@@ -88,8 +97,11 @@ describe("Test Appointment Service API", function () {
     expect(response.body)
       .to.have.property("appointmentServiceId")
       .to.equal(appointmentServiceId);
-    addTestLog(this, `Verified appointment service ID: ${appointmentServiceId}`);
-    
+    addTestLog(
+      this,
+      `Verified appointment service ID: ${appointmentServiceId}`,
+    );
+
     expect(response.body)
       .to.have.property("name")
       .to.equal(updateServiceAvailabilityPayload.name);
@@ -104,7 +116,10 @@ describe("Test Appointment Service API", function () {
       bahmniUserCredentials.appointmentService.expected_privileges,
     );
 
-    addTestLog(this, `Setting credentials for user: ${bahmniUserCredentials.appointmentService.username}`);
+    addTestLog(
+      this,
+      `Setting credentials for user: ${bahmniUserCredentials.appointmentService.username}`,
+    );
     setAuthCredentials(
       bahmniUserCredentials.appointmentService.username,
       bahmniUserCredentials.appointmentService.password,
@@ -113,7 +128,7 @@ describe("Test Appointment Service API", function () {
     addTestLog(this, `Deleting service with UUID: ${serviceUuid}`);
     const response = await deleteServiceByUuid(serviceUuid);
     addApiDetailsToReport(this); // Add API details to report
-    
+
     expect(response.body)
       .to.have.property("appointmentServiceId")
       .to.equal(appointmentServiceId);

@@ -4,6 +4,7 @@
   "description": "",
   "type": "module",
   "main": "index.js",
+  "packageManager": "yarn@4.0.0",
   "scripts": {
     "test": "mocha --config .mocharc.json",
     "test:bahmni": "mocha --config .mocharc.json --spec 'tests/specs/bahmni/**/*.spec.js' && yarn report:generate",
