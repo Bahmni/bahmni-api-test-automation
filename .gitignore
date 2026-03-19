@@ -3,7 +3,7 @@ mochawesome-report
 
 # Dependencies
 node_modules
-yarn.lock
+package-lock.json
 
 # System Files
 .DS_Store
