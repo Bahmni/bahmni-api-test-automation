@@ -8,7 +8,7 @@ export const attributeTypes = {
 
 export async function getAppointmentServiceAttributeTypes() {
   const fullEndpoint = `${process.env.BAHMNI_URL || "https://localhost"}/${attributeTypes.basepath}`;
-  
+
   lastApiCall.method = "GET";
   lastApiCall.endpoint = fullEndpoint;
   lastApiCall.payload = null;
@@ -17,8 +17,8 @@ export async function getAppointmentServiceAttributeTypes() {
   return handleApiResponse(
     authenticatedRequest().get(attributeTypes.basepath),
     200,
-    'GET',
-    fullEndpoint
+    "GET",
+    fullEndpoint,
   );
 }
 

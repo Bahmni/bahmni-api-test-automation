@@ -3,7 +3,13 @@ mochawesome-report
 
 # Dependencies
 node_modules
-yarn.lock
+package-lock.json
+
+# Yarn 4
+.yarn/install-state.gz
+.yarn/cache
+.yarn/unplugged
+.pnp.*
 
 # System Files
 .DS_Store

@@ -11,17 +11,19 @@ const appointmentservice = {
 
 export async function getAllServiceDetails() {
   const fullEndpoint = `${config.baseURI}${appointmentservice.base}${appointmentservice.getAll}`;
-  
-  lastApiCall.method = 'GET';
+
+  lastApiCall.method = "GET";
   lastApiCall.endpoint = fullEndpoint;
   lastApiCall.payload = null;
   lastApiCall.queryParams = null;
-  
+
   return handleApiResponse(
-    authenticatedRequest().get(`${appointmentservice.base}${appointmentservice.getAll}`),
+    authenticatedRequest().get(
+      `${appointmentservice.base}${appointmentservice.getAll}`,
+    ),
     200,
-    'GET',
-    fullEndpoint
+    "GET",
+    fullEndpoint,
   );
 }
 
@@ -48,26 +50,26 @@ export async function validateIfServiceExists(serviceName) {
 export async function getServiceByUuid(serviceUuid) {
   const fullEndpoint = `${config.baseURI}${appointmentservice.base}`;
   const queryParams = { uuid: serviceUuid };
-  
-  lastApiCall.method = 'GET';
+
+  lastApiCall.method = "GET";
   lastApiCall.endpoint = fullEndpoint;
   lastApiCall.payload = null;
   lastApiCall.queryParams = queryParams;
-  
+
   return handleApiResponse(
     authenticatedRequest().get(appointmentservice.base).query(queryParams),
     200,
-    'GET',
+    "GET",
     fullEndpoint,
     null,
-    queryParams
+    queryParams,
   );
 }
 
 export async function deleteServiceByUuid(serviceUuid) {
   const fullEndpoint = `${config.baseURI}${appointmentservice.base}`;
   const queryParams = { uuid: serviceUuid };
-  
+
   lastApiCall.method = "DELETE";
   lastApiCall.endpoint = fullEndpoint;
   lastApiCall.payload = null;
@@ -76,10 +78,10 @@ export async function deleteServiceByUuid(serviceUuid) {
   return handleApiResponse(
     authenticatedRequest().delete(appointmentservice.base).query(queryParams),
     200,
-    'DELETE',
+    "DELETE",
     fullEndpoint,
     null,
-    queryParams
+    queryParams,
   );
 }
 
@@ -97,7 +99,8 @@ export async function updateServicePayloadWithAttributeTypeUuids(payload) {
 }
 
 export async function createService(payload) {
-  const servicePayload = await updateServicePayloadWithAttributeTypeUuids(payload);
+  const servicePayload =
+    await updateServicePayloadWithAttributeTypeUuids(payload);
   const fullEndpoint = `${process.env.BAHMNI_URL || "https://localhost"}/${appointmentservice.base}`;
 
   lastApiCall.method = "POST";
@@ -108,14 +111,15 @@ export async function createService(payload) {
   return handleApiResponse(
     authenticatedRequest().post(appointmentservice.base).send(servicePayload),
     200,
-    'POST',
+    "POST",
     fullEndpoint,
-    servicePayload
+    servicePayload,
   );
 }
 
 export async function updateService(uuid, payload) {
-  const servicePayload = await updateServicePayloadWithAttributeTypeUuids(payload);
+  const servicePayload =
+    await updateServicePayloadWithAttributeTypeUuids(payload);
   servicePayload.uuid = uuid;
   const fullEndpoint = `${process.env.BAHMNI_URL || "https://localhost"}/${appointmentservice.base}`;
 
@@ -127,8 +131,8 @@ export async function updateService(uuid, payload) {
   return handleApiResponse(
     authenticatedRequest().post(appointmentservice.base).send(servicePayload),
     200,
-    'POST',
+    "POST",
     fullEndpoint,
-    servicePayload
+    servicePayload,
   );
 }

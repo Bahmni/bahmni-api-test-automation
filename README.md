@@ -21,14 +21,14 @@ A scalable API testing framework for Bahmni built with Mocha, Chai, and Supertes
 
 ### Prerequisites
 - Node.js 18.x+
-- npm (Note: This project uses npm, not yarn)
+- Yarn 1.x+
 
 ### Installation
 
 ```bash
 git clone https://github.com/Bahmni/bahmni-api-test-automation.git
 cd bahmni-api-test-automation
-npm install
+yarn install
 ```
 
 ### Configure Environment
@@ -45,7 +45,7 @@ SUPERADMIN_PASSWORD=Admin123
 ### Run Tests
 
 ```bash
-npm test
+yarn test
 ```
 
 View report: `mochawesome-report/mochawesome.html`
@@ -98,7 +98,7 @@ describe("My First Test", function() {
 });
 ```
 
-Run: `npm test`
+Run: `yarn test`
 
 ---
 
@@ -261,19 +261,19 @@ Tests (specs/) → Services (src/services/) → Config/Helpers (src/config/, src
 
 ```bash
 # All tests
-npm test
+yarn test
 
 # Specific suite
-npm run test:bahmni
+yarn test:bahmni
 
 # With environment
-TEST_ENV=qa npm test
+TEST_ENV=qa yarn test
 
 # Specific file
 npx mocha tests/specs/bahmni/appointmentService.spec.js
 
 # Generate report only
-npm run report:generate
+yarn report:generate
 ```
 
 ---
