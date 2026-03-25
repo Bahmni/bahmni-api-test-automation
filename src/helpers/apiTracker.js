@@ -1,13 +1,15 @@
 // Centralized API tracking for all service files
 // This helper eliminates redundancy and makes creating new services easy
 
+import { config } from "../config/index.js";
+
 // Global store for last API call from any service
 export const lastApiCall = {};
 
 // Wrapper function that automatically tracks API call details and captures request/response
 export async function trackApiCall(apiCallFn, metadata) {
   lastApiCall.method = metadata.method;
-  lastApiCall.endpoint = `${process.env.BAHMNI_URL || "https://localhost"}/${metadata.endpoint}`;
+  lastApiCall.endpoint = `${config.baseURI}${metadata.endpoint}`;
   lastApiCall.payload = metadata.payload || null;
   lastApiCall.queryParams = metadata.queryParams || null;
 

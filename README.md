@@ -20,6 +20,7 @@ A scalable API testing framework for Bahmni built with Mocha, Chai, and Supertes
 ## 🚀 Quick Setup
 
 ### Prerequisites
+
 - Node.js 18.x+
 - Yarn 1.x+
 
@@ -68,6 +69,7 @@ bahmni-api-test-automation/
 ```
 
 **Key Concepts:**
+
 - **`src/services/`** - All API calls go here. One service file per domain/module
 - **`tests/specs/`** - Test files organized by feature
 - **`tests/fixtures/`** - Reusable helpers and utilities
@@ -85,15 +87,15 @@ Create `tests/specs/bahmni/myTest.spec.js`:
 import { getAllServiceDetails } from "../../../src/services/openmrs/appointmentService.js";
 import { addTestLog, addApiDetailsToReport } from "../../fixtures/rootHooks.js";
 
-describe("My First Test", function() {
-  it("should fetch appointment services", async function() {
+describe("My First Test", function () {
+  it("should fetch appointment services", async function () {
     addTestLog(this, "Fetching appointment services");
-    
+
     const response = await getAllServiceDetails();
     addApiDetailsToReport(this);
-    
+
     expect(response.status).to.equal(200);
-    expect(response.body).to.be.an('array');
+    expect(response.body).to.be.an("array");
   });
 });
 ```
@@ -116,24 +118,25 @@ export async function getServiceByName(serviceName) {
   const endpoint = "openmrs/ws/rest/v1/appointmentService";
   const fullEndpoint = `${config.baseURI}${endpoint}`;
   const queryParams = { name: serviceName };
-  
-  lastApiCall.method = 'GET';
+
+  lastApiCall.method = "GET";
   lastApiCall.endpoint = fullEndpoint;
   lastApiCall.payload = null;
   lastApiCall.queryParams = queryParams;
-  
+
   return handleApiResponse(
     authenticatedRequest().get(endpoint).query(queryParams),
     200,
-    'GET',
+    "GET",
     fullEndpoint,
     null,
-    queryParams
+    queryParams,
   );
 }
 ```
 
 **Key Points:**
+
 - Use `handleApiResponse()` for automatic API tracking & error handling
 - Use `authenticatedRequest()` for basic auth
 - Use `lastApiCall` to track request details for reports
@@ -146,6 +149,7 @@ export async function getServiceByName(serviceName) {
 ### 3. Add Helper Functions
 
 **General helpers:** `tests/fixtures/testHelpers.js`
+
 ```javascript
 export function myGeneralHelper() {
   // Logic used across all tests
@@ -153,6 +157,7 @@ export function myGeneralHelper() {
 ```
 
 **Domain-specific helpers:** `tests/fixtures/testHelpers.js`
+
 ```javascript
 export function generateServiceName(prefix = "Test-Service") {
   const timestamp = Date.now();
@@ -161,10 +166,11 @@ export function generateServiceName(prefix = "Test-Service") {
 ```
 
 **Usage:**
+
 ```javascript
 import { generateServiceName } from "../../fixtures/testHelpers.js";
 
-it("test with unique service name", async function() {
+it("test with unique service name", async function () {
   const serviceName = generateServiceName();
   // Use in test
 });
@@ -175,36 +181,39 @@ it("test with unique service name", async function() {
 ### 4. Work with Test Data
 
 **Payloads:** `tests/testdata/payloads/bahmni/createServicePayload.js`
+
 ```javascript
 export const appointmentServicePayload = {
   name: "Test-Service",
   description: "Test service description",
   startTime: "09:00:00",
   endTime: "17:00:00",
-  maxAppointmentsLimit: 10
+  maxAppointmentsLimit: 10,
 };
 ```
 
 **Environment-specific data:**
+
 ```javascript
 import { config } from "../../../src/config/index.js";
 
 export const testData = {
   dev: { locationId: "dev-123" },
   qa: { locationId: "qa-456" },
-  uat: { locationId: "uat-789" }
+  uat: { locationId: "uat-789" },
 };
 
 // Usage: testData[config.env].locationId
 ```
 
 **Credentials:** `tests/testdata/credentials/myCredentials.js`
+
 ```javascript
-export const users = {
-  testUser: {
-    username: process.env.TEST_USER || "defaultUser",
-    password: process.env.TEST_PASSWORD || ""
-  }
+export const myCredentials = {
+  user1: {
+    username: process.env.YOUR_USERNAME_VAR || "defaultUsername",
+    password: process.env.YOUR_PASSWORD_VAR || "",
+  },
 };
 ```
 
@@ -213,6 +222,7 @@ export const users = {
 ## 📊 Reports
 
 Framework uses **Mochawesome** for HTML reports with:
+
 - Test summary (pass/fail/duration)
 - Custom logs via `addTestLog(this, "message")`
 - API details via `addApiDetailsToReport(this)`
@@ -221,12 +231,12 @@ Framework uses **Mochawesome** for HTML reports with:
 ### Add Logs to Reports
 
 ```javascript
-it("my test", async function() {
+it("my test", async function () {
   addTestLog(this, "Step 1: Starting");
-  
+
   const response = await apiCall();
   addApiDetailsToReport(this); // Adds API request/response
-  
+
   addTestLog(this, `Received ${response.body.length} items`);
 });
 ```
@@ -319,26 +329,33 @@ export let environments = {
 ### Test Structure
 
 ```javascript
-describe("Feature", function() {
-  before(async function() { /* Setup */ });
-  
-  it("should do something", async function() {
+describe("Feature", function () {
+  before(async function () {
+    /* Setup */
+  });
+
+  it("should do something", async function () {
     const response = await apiCall();
     addApiDetailsToReport(this);
     expect(response.status).to.equal(200);
   });
-  
-  afterEach(function() { resetAuthCredentials(); });
+
+  afterEach(function () {
+    resetAuthCredentials();
+  });
 });
 ```
 
 ### Auth Switching
 
 ```javascript
-import { setAuthCredentials, resetAuthCredentials } from "../../src/config/authManager.js";
+import {
+  setAuthCredentials,
+  resetAuthCredentials,
+} from "../../src/config/authManager.js";
 
-it("test with user", async function() {
-  setAuthCredentials('user', 'pass');
+it("test with user", async function () {
+  setAuthCredentials("user", "pass");
   const response = await apiCall();
   expect(response.status).to.equal(200);
   // Auto-reset in afterEach
@@ -349,8 +366,8 @@ it("test with user", async function() {
 
 ```javascript
 expect(response.status).to.equal(200);
-expect(response.body).to.be.an('array');
-expect(response.body).to.have.property('uuid');
+expect(response.body).to.be.an("array");
+expect(response.body).to.have.property("uuid");
 expect(actualArray).to.have.members(expectedArray);
 expect(actualObject).to.deep.equal(expectedObject);
 ```

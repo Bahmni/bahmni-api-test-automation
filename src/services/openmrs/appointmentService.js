@@ -101,7 +101,7 @@ export async function updateServicePayloadWithAttributeTypeUuids(payload) {
 export async function createService(payload) {
   const servicePayload =
     await updateServicePayloadWithAttributeTypeUuids(payload);
-  const fullEndpoint = `${process.env.BAHMNI_URL || "https://localhost"}/${appointmentservice.base}`;
+  const fullEndpoint = `${config.baseURI}${appointmentservice.base}`;
 
   lastApiCall.method = "POST";
   lastApiCall.endpoint = fullEndpoint;
@@ -121,7 +121,7 @@ export async function updateService(uuid, payload) {
   const servicePayload =
     await updateServicePayloadWithAttributeTypeUuids(payload);
   servicePayload.uuid = uuid;
-  const fullEndpoint = `${process.env.BAHMNI_URL || "https://localhost"}/${appointmentservice.base}`;
+  const fullEndpoint = `${config.baseURI}${appointmentservice.base}`;
 
   lastApiCall.method = "POST";
   lastApiCall.endpoint = fullEndpoint;
