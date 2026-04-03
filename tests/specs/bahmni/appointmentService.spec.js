@@ -35,18 +35,18 @@ describe("Test Appointment Service API", function () {
   it("Validate creation of Service with a user having manage service privilege", async function () {
     await checkPrivilegesOrSkip(
       this,
-      bahmniUserCredentials.appointmentService.username,
+      bahmniUserCredentials.appointmentAdmin.username,
       userPrivilegeCustomParams,
-      bahmniUserCredentials.appointmentService.expected_privileges,
+      bahmniUserCredentials.appointmentAdmin.expected_privileges,
     );
 
     addTestLog(
       this,
-      `Setting credentials for user: ${bahmniUserCredentials.appointmentService.username}`,
+      `Setting credentials for user: ${bahmniUserCredentials.appointmentAdmin.username}`,
     );
     setAuthCredentials(
-      bahmniUserCredentials.appointmentService.username,
-      bahmniUserCredentials.appointmentService.password,
+      bahmniUserCredentials.appointmentAdmin.username,
+      bahmniUserCredentials.appointmentAdmin.password,
     );
 
     addTestLog(
@@ -71,20 +71,30 @@ describe("Test Appointment Service API", function () {
   });
 
   it("Validation updation of Service Slots with a user having Service availability privilege", async function () {
+    // Check if Test 1 provided the required UUID
+    if (!serviceUuid) {
+      const message = `[SKIPPED - Depends on Test 1 'Service Creation' which was skipped or failed]`;
+      console.log(
+        `Skipping: ${this.test.title}\n  Reason: Service UUID not available from Test 1`,
+      );
+      this.test.title += ` ${message}`;
+      this.skip();
+    }
+
     await checkPrivilegesOrSkip(
       this,
-      bahmniUserCredentials.serviceAvailability.username,
+      bahmniUserCredentials.appointmentAdmin.username,
       userPrivilegeCustomParams,
-      bahmniUserCredentials.serviceAvailability.expected_privileges,
+      bahmniUserCredentials.appointmentAdmin.expected_privileges,
     );
 
     addTestLog(
       this,
-      `Setting credentials for user: ${bahmniUserCredentials.serviceAvailability.username}`,
+      `Setting credentials for user: ${bahmniUserCredentials.appointmentAdmin.username}`,
     );
     setAuthCredentials(
-      bahmniUserCredentials.serviceAvailability.username,
-      bahmniUserCredentials.serviceAvailability.password,
+      bahmniUserCredentials.appointmentAdmin.username,
+      bahmniUserCredentials.appointmentAdmin.password,
     );
 
     addTestLog(this, `Updating service slots for UUID: ${serviceUuid}`);
@@ -109,20 +119,30 @@ describe("Test Appointment Service API", function () {
   });
 
   it("Validate deletion of Service with a user having manage service privilege", async function () {
+    // Check if Test 1 provided the required UUID
+    if (!serviceUuid) {
+      const message = `[SKIPPED - Depends on Test 1 'Service Creation' which was skipped or failed]`;
+      console.log(
+        `Skipping: ${this.test.title}\n  Reason: Service UUID not available from Test 1`,
+      );
+      this.test.title += ` ${message}`;
+      this.skip();
+    }
+
     await checkPrivilegesOrSkip(
       this,
-      bahmniUserCredentials.appointmentService.username,
+      bahmniUserCredentials.appointmentAdmin.username,
       userPrivilegeCustomParams,
-      bahmniUserCredentials.appointmentService.expected_privileges,
+      bahmniUserCredentials.appointmentAdmin.expected_privileges,
     );
 
     addTestLog(
       this,
-      `Setting credentials for user: ${bahmniUserCredentials.appointmentService.username}`,
+      `Setting credentials for user: ${bahmniUserCredentials.appointmentAdmin.username}`,
     );
     setAuthCredentials(
-      bahmniUserCredentials.appointmentService.username,
-      bahmniUserCredentials.appointmentService.password,
+      bahmniUserCredentials.appointmentAdmin.username,
+      bahmniUserCredentials.appointmentAdmin.password,
     );
 
     addTestLog(this, `Deleting service with UUID: ${serviceUuid}`);

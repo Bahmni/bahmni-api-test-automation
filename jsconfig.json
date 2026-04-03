@@ -1,11 +1,7 @@
 {
-    "compilerOptions": {
-        "checkJs": false,
-        "allowJs": true,
-    },
-    "include": [
-        "src/**/*.js",
-        "tests/**/*.js",
-        "tests/fixtures/globals.d.ts"
-    ]
+  "compilerOptions": {
+    "checkJs": false,
+    "allowJs": true
+  },
+  "include": ["src/**/*.js", "tests/**/*.js", "tests/fixtures/globals.d.ts"]
 }
