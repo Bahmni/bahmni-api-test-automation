@@ -64,7 +64,7 @@ describe("App Settings API - Bahmni Commons Module", function () {
     });
 
     // Validation 6: default_dateFormat value
-    it("Should have 'default_dateFormat' with value 'dd-MMM-yyyy'", async function () {
+    it("Should have 'default_dateFormat' with value 'MM-dd-yyyy'", async function () {
       const response = await getAppSettings();
 
       const setting = response.body.find(
@@ -72,7 +72,7 @@ describe("App Settings API - Bahmni Commons Module", function () {
       );
 
       expect(setting).to.exist;
-      expect(setting.value).to.equal("dd-MMM-yyyy");
+      expect(setting.value).to.equal("MM-dd-yyyy");
 
       addTestLog(this, `✓ default_dateFormat: "${setting.value}"`);
     });
