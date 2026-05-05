@@ -6,3 +6,7 @@ export function authenticatedRequest() {
   const { authUser, authPassword } = getAuthCredentials();
   return supertest.agent(config.baseURI).auth(authUser, authPassword);
 }
+
+export function unauthenticatedRequest() {
+  return supertest.agent(config.baseURI);
+}

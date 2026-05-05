@@ -14,7 +14,7 @@ export function addTestLog(testContext, message) {
 }
 
 // Export helper function to add API details to the report
-export function addApiDetailsToReport(testContext) {
+export function addApiDetailsToReport(testContext, includeResponseBody = true) {
   if (lastApiCall && lastApiCall.method) {
     addContext(
       testContext,
@@ -45,7 +45,8 @@ export function addApiDetailsToReport(testContext) {
       addContext(testContext, `\n✅ Status Code: ${lastApiCall.statusCode}`);
     }
 
-    if (lastApiCall.response) {
+    // Only include response body if requested (for failed tests)
+    if (includeResponseBody && lastApiCall.response) {
       addContext(testContext, "\n📄 Response Body:");
       const responseStr = JSON.stringify(lastApiCall.response, null, 2);
       if (responseStr.length > 5000) {
@@ -115,8 +116,9 @@ export const mochaHooks = {
   afterEach() {
     // Add API request details to mochawesome report context for all tests
     if (lastApiCall && lastApiCall.method) {
-      // Call our helper function to add API details
-      addApiDetailsToReport(this);
+      // Only include response body for failed tests
+      const includeResponseBody = this.currentTest.state === "failed";
+      addApiDetailsToReport(this, includeResponseBody);
     }
   },
 };

@@ -12,7 +12,7 @@ import { appointmentServicePayload } from "../../testdata/payloads/bahmni/create
 import { appointmentServicePayload as updateServiceAvailabilityPayload } from "../../testdata/payloads/bahmni/updateServiceAvailabilityPayload.js";
 import { bahmniUserCredentials } from "../../testdata/credentials/bahmniUserCredentials.js";
 import { checkPrivilegesOrSkip } from "../../fixtures/testHelpers.js";
-import { addTestLog, addApiDetailsToReport } from "../../fixtures/rootHooks.js";
+import { addTestLog } from "../../fixtures/rootHooks.js";
 
 describe("Test Appointment Service API", function () {
   const userPrivilegeCustomParams = "custom:(username,privileges:(name))";
@@ -54,7 +54,6 @@ describe("Test Appointment Service API", function () {
       `Creating appointment service: ${appointmentServicePayload.name}`,
     );
     const response = await createService(appointmentServicePayload);
-    addApiDetailsToReport(this); // Add API details to report
 
     expect(response.body)
       .to.have.property("name")
@@ -102,7 +101,6 @@ describe("Test Appointment Service API", function () {
       serviceUuid,
       updateServiceAvailabilityPayload,
     );
-    addApiDetailsToReport(this); // Add API details to report
 
     expect(response.body)
       .to.have.property("appointmentServiceId")
@@ -147,7 +145,6 @@ describe("Test Appointment Service API", function () {
 
     addTestLog(this, `Deleting service with UUID: ${serviceUuid}`);
     const response = await deleteServiceByUuid(serviceUuid);
-    addApiDetailsToReport(this); // Add API details to report
 
     expect(response.body)
       .to.have.property("appointmentServiceId")
