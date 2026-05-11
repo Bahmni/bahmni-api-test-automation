@@ -27,7 +27,7 @@ describe("App Settings API - Bahmni Commons Module", function () {
     });
 
     // Validation 3: Response time
-    it("Should respond within 200ms", async function () {
+    it("Validate response time within 200ms", async function () {
       const startTime = Date.now();
       await getAppSettings();
       const responseTime = Date.now() - startTime;

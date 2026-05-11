@@ -1,4 +1,4 @@
-import { unauthenticatedRequest } from "../../config/apiClient.js";
+import { authenticatedRequest } from "../../config/apiClient.js";
 import { handleApiResponse } from "../../helpers/apiResponseHandler.js";
 import { lastApiCall } from "../../helpers/apiTracker.js";
 import { config } from "../../config/index.js";
@@ -6,7 +6,7 @@ import { config } from "../../config/index.js";
 /**
  * GET /openmrs/ws/rest/v1/bahmni/app/setting?module=commons
  * Gets Bahmni app settings for commons module
- * NO authentication required (public endpoint)
+ * Requires authentication with 'Get Global Properties' privilege
  * 
  * @returns {Promise} Response with array of settings
  */
@@ -21,7 +21,7 @@ export async function getAppSettings() {
   lastApiCall.queryParams = queryParams;
 
   return handleApiResponse(
-    unauthenticatedRequest().get(endpoint).query(queryParams),
+    authenticatedRequest().get(endpoint).query(queryParams),
     200,
     "GET",
     fullEndpoint,
