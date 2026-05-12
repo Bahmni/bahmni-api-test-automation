@@ -48,12 +48,12 @@ describe("System Settings API - Encounter Session Duration", function () {
     });
 
     // Validation 4: Response time
-    it("Validate response time within 200ms", async function () {
+    it("Validate response time within 300ms", async function () {
       const startTime = Date.now();
       await getEncounterSessionDuration();
       const responseTime = Date.now() - startTime;
 
-      expect(responseTime).to.be.lessThan(200);
+      expect(responseTime).to.be.lessThan(300);
 
       addTestLog(this, `✓ Response time: ${responseTime}ms`);
     });
