@@ -211,7 +211,7 @@ describe("Session API - GET & POST Validations", function () {
     });
 
     // Validation 7: Response time
-    it("Should respond within 300ms", async function () {
+    it("Validate response time within 300ms", async function () {
       const startTime = Date.now();
       const response = await getSession();
       const responseTime = Date.now() - startTime;
